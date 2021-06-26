@@ -61,22 +61,30 @@ get_kokkos_cuda_option_list() {
   echo parsing KOKKOS_CUDA_OPTIONS=$KOKKOS_CUDA_OPTIONS
   KOKKOS_CUDA_OPTION_CMD=
   PARSE_CUDA_LST=$(echo $KOKKOS_CUDA_OPTIONS | tr "," "\n")
+  local opt_val=""
   for CUDA_ in $PARSE_CUDA_LST
   do
      CUDA_OPT_NAME=
      if [ "${CUDA_}" == "enable_lambda" ]; then
         CUDA_OPT_NAME=CUDA_LAMBDA
+        opt_val="ON"
+     elif [ "${CUDA_}" == "disable_cuda_arch_linking" ]; then
+        CUDA_OPT_NAME=CUDA_ARCH_LINKING
+        opt_val="OFF"
      elif  [ "${CUDA_}" == "rdc" ]; then
         CUDA_OPT_NAME=CUDA_RELOCATABLE_DEVICE_CODE
+        opt_val="ON"
      elif  [ "${CUDA_}" == "force_uvm" ]; then
         CUDA_OPT_NAME=CUDA_UVM
+        opt_val="ON"
      elif  [ "${CUDA_}" == "use_ldg" ]; then
         CUDA_OPT_NAME=CUDA_LDG_INTRINSIC
+        opt_val="ON"
      else
         echo "${CUDA_} is not a valid cuda options..."
      fi
      if [ "${CUDA_OPT_NAME}" != "" ]; then
-        KOKKOS_CUDA_OPTION_CMD="-DKokkos_ENABLE_${CUDA_OPT_NAME}=ON ${KOKKOS_CUDA_OPTION_CMD}"
+        KOKKOS_CUDA_OPTION_CMD="-DKokkos_ENABLE_${CUDA_OPT_NAME}=${opt_val} ${KOKKOS_CUDA_OPTION_CMD}"
      fi
   done
 }
@@ -218,7 +226,7 @@ display_help_text() {
       echo "                                disable_profiling = do not compile with profiling hooks"
       echo "                                "
       echo "--with-cuda-options=[OPT]:    Additional options to CUDA:"
-      echo "                                force_uvm, use_ldg, enable_lambda, rdc"
+      echo "                                force_uvm, use_ldg, enable_lambda, rdc, disable_cuda_arch_linking"
       echo "--with-hip-options=[OPT]:     Additional options to HIP:"
       echo "                                rdc"
       echo "--with-hpx-options=[OPT]:     Additional options to HPX:"
