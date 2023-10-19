@@ -263,8 +263,8 @@ class SYCLTeamMember {
     auto total = base_data[n_active_subgroups - 1];
 
     const auto update = sg.shuffle_up(value, vector_range);
-    Type intermediate = (group_id > 0 ? base_data[group_id - 1] : 0) +
-                        (id_in_sg >= vector_range ? update : 0);
+    Type intermediate = (group_id > 0 ? base_data[group_id - 1] : static_cast<Type>(0)) +
+                        (id_in_sg >= vector_range ? update : static_cast<Type>(0));
 
     if (global_accum) {
       if (id_in_sg == sub_group_range - 1 &&
